@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-surface: #0f0f12;
+    --color-surface-elevated: #16161a;
+    --color-surface-overlay: #1c1c21;
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-muted: rgba(255, 255, 255, 0.05);
+    --color-muted: #71717a;
+    --color-muted-foreground: #a1a1aa;
+    --color-accent: #6366f1;
+    --color-accent-hover: #818cf8;
+    --radius-app: 0.5rem;
+    --radius-app-lg: 0.625rem;
+    --shadow-app-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-app-card: 0 1px 3px 0 rgb(0 0 0 / 0.08);
+  }
+
+  body {
+    @apply bg-surface text-zinc-100 antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+}
+
+@layer components {
+  /* Page container: consistent max-width, padding, vertical rhythm */
+  .app-page {
+    @apply max-w-4xl px-page-x py-page-y;
+  }
+
+  .app-page-narrow {
+    @apply app-page max-w-2xl;
+  }
+
+  /* Typography hierarchy */
+  .app-page-title {
+    @apply text-page-title font-semibold text-white tracking-tight;
+  }
+
+  .app-page-description {
+    @apply text-sm text-muted-foreground mt-0.5;
+  }
+
+  .app-section-title {
+    @apply text-section-title text-white;
+  }
+
+  .app-section-description {
+    @apply text-sm text-muted-foreground mt-0.5;
+  }
+
+  /* Back / breadcrumb link */
+  .app-back-link {
+    @apply inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-white transition-colors mb-4;
+  }
+
+  /* Form controls: unified look */
+  .app-label {
+    @apply block text-sm font-medium text-muted-foreground mb-1.5;
+  }
+
+  .app-input,
+  .app-select,
+  .app-textarea {
+    @apply w-full rounded-app border border-border bg-surface-elevated px-3 py-2 text-sm text-white placeholder-muted
+      focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30
+      transition-colors;
+  }
+
+  .app-input,
+  .app-textarea {
+    @apply min-w-0;
+  }
+
+  .app-textarea {
+    @apply min-h-[88px] resize-y;
+  }
+
+  .app-select {
+    @apply cursor-pointer appearance-none bg-surface-elevated;
+  }
+
+  /* Cards */
+  .app-card {
+    @apply rounded-app-lg border border-border bg-surface-elevated/80 p-6 shadow-app-card;
+  }
+
+  /* Tables */
+  .app-table-wrap {
+    @apply rounded-app-lg border border-border overflow-hidden bg-surface-elevated/60 shadow-app-sm;
+  }
+
+  .app-table {
+    @apply w-full text-left text-sm;
+  }
+
+  .app-table th {
+    @apply px-4 py-3 font-medium text-muted-foreground bg-surface-overlay/80 border-b border-border;
+  }
+
+  .app-table td {
+    @apply px-4 py-3 border-b border-border-muted;
+  }
+
+  .app-table tbody tr {
+    @apply transition-colors hover:bg-white/[0.02];
+  }
+
+  .app-table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  /* Empty state */
+  .app-empty {
+    @apply px-4 py-8 text-sm text-muted text-center;
+  }
+
+  /* Error text */
+  .app-error {
+    @apply text-sm text-red-400;
+  }
+}

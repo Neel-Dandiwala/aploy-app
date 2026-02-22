@@ -1,0 +1,153 @@
+import { _ as __nuxt_component_0 } from "./AppPageHeader-3vaz4YvC.js";
+import { _ as __nuxt_component_1 } from "./AppCard-T_GiUAp6.js";
+import { _ as __nuxt_component_0$1 } from "./AppButton-DJM0cog_.js";
+import { _ as __nuxt_component_0$2 } from "./nuxt-link-T1BgcM6o.js";
+import { defineComponent, mergeProps, withCtx, createTextVNode, createVNode, useSSRContext } from "vue";
+import "/Users/neeldandiwala/Projects/aploy/aploy-app/node_modules/hookable/dist/index.mjs";
+import { ssrRenderAttrs, ssrRenderComponent } from "vue/server-renderer";
+import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
+import "/Users/neeldandiwala/Projects/aploy/aploy-app/node_modules/ufo/dist/index.mjs";
+import "../server.mjs";
+import "/Users/neeldandiwala/Projects/aploy/aploy-app/node_modules/ofetch/dist/node.mjs";
+import "#internal/nuxt/paths";
+import "/Users/neeldandiwala/Projects/aploy/aploy-app/node_modules/unctx/dist/index.mjs";
+import "/Users/neeldandiwala/Projects/aploy/aploy-app/node_modules/h3/dist/index.mjs";
+import "vue-router";
+import "/Users/neeldandiwala/Projects/aploy/aploy-app/node_modules/defu/dist/defu.mjs";
+import "/Users/neeldandiwala/Projects/aploy/aploy-app/node_modules/@unhead/vue/dist/index.mjs";
+const _sfc_main = defineComponent({
+  name: "ProjectDetail"
+});
+function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
+  const _component_AppPageHeader = __nuxt_component_0;
+  const _component_AppCard = __nuxt_component_1;
+  const _component_AppButton = __nuxt_component_0$1;
+  const _component_NuxtLink = __nuxt_component_0$2;
+  _push(`<div${ssrRenderAttrs(mergeProps({ class: "app-page" }, _attrs))}>`);
+  _push(ssrRenderComponent(_component_AppPageHeader, {
+    title: "Support Bot",
+    description: "DPO tuning for support chat. Base: Mistral-7B-v0.2",
+    "back-to": "/app/projects",
+    "back-label": "Projects"
+  }, null, _parent));
+  _push(`<div class="grid gap-4">`);
+  _push(ssrRenderComponent(_component_AppCard, null, {
+    default: withCtx((_, _push2, _parent2, _scopeId) => {
+      if (_push2) {
+        _push2(`<h3 class="app-section-title mb-4"${_scopeId}>Datasets</h3>`);
+        _push2(ssrRenderComponent(_component_AppButton, {
+          variant: "secondary",
+          to: "/app/datasets/new",
+          class: "mb-4"
+        }, {
+          default: withCtx((_2, _push3, _parent3, _scopeId2) => {
+            if (_push3) {
+              _push3(`Add dataset`);
+            } else {
+              return [
+                createTextVNode("Add dataset")
+              ];
+            }
+          }),
+          _: 1
+        }, _parent2, _scopeId));
+        _push2(`<ul class="space-y-2 text-sm text-muted-foreground"${_scopeId}><li${_scopeId}>Support chat v1 (10,200 rows) — <span class="text-emerald-500"${_scopeId}>ready</span></li></ul>`);
+      } else {
+        return [
+          createVNode("h3", { class: "app-section-title mb-4" }, "Datasets"),
+          createVNode(_component_AppButton, {
+            variant: "secondary",
+            to: "/app/datasets/new",
+            class: "mb-4"
+          }, {
+            default: withCtx(() => [
+              createTextVNode("Add dataset")
+            ]),
+            _: 1
+          }),
+          createVNode("ul", { class: "space-y-2 text-sm text-muted-foreground" }, [
+            createVNode("li", null, [
+              createTextVNode("Support chat v1 (10,200 rows) — "),
+              createVNode("span", { class: "text-emerald-500" }, "ready")
+            ])
+          ])
+        ];
+      }
+    }),
+    _: 1
+  }, _parent));
+  _push(ssrRenderComponent(_component_AppCard, null, {
+    default: withCtx((_, _push2, _parent2, _scopeId) => {
+      if (_push2) {
+        _push2(`<h3 class="app-section-title mb-4"${_scopeId}>Recent runs</h3>`);
+        _push2(ssrRenderComponent(_component_NuxtLink, {
+          to: "/app/runs/run_1",
+          class: "text-accent hover:text-accent-hover text-sm"
+        }, {
+          default: withCtx((_2, _push3, _parent3, _scopeId2) => {
+            if (_push3) {
+              _push3(`run_1`);
+            } else {
+              return [
+                createTextVNode("run_1")
+              ];
+            }
+          }),
+          _: 1
+        }, _parent2, _scopeId));
+        _push2(`<span class="text-muted-foreground text-sm"${_scopeId}> — succeeded</span>`);
+        _push2(ssrRenderComponent(_component_AppButton, {
+          to: "/app/training/new",
+          class: "mt-4"
+        }, {
+          default: withCtx((_2, _push3, _parent3, _scopeId2) => {
+            if (_push3) {
+              _push3(`Start training`);
+            } else {
+              return [
+                createTextVNode("Start training")
+              ];
+            }
+          }),
+          _: 1
+        }, _parent2, _scopeId));
+      } else {
+        return [
+          createVNode("h3", { class: "app-section-title mb-4" }, "Recent runs"),
+          createVNode(_component_NuxtLink, {
+            to: "/app/runs/run_1",
+            class: "text-accent hover:text-accent-hover text-sm"
+          }, {
+            default: withCtx(() => [
+              createTextVNode("run_1")
+            ]),
+            _: 1
+          }),
+          createVNode("span", { class: "text-muted-foreground text-sm" }, " — succeeded"),
+          createVNode(_component_AppButton, {
+            to: "/app/training/new",
+            class: "mt-4"
+          }, {
+            default: withCtx(() => [
+              createTextVNode("Start training")
+            ]),
+            _: 1
+          })
+        ];
+      }
+    }),
+    _: 1
+  }, _parent));
+  _push(`</div></div>`);
+}
+const _sfc_setup = _sfc_main.setup;
+_sfc_main.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("pages/app/projects/[id].vue");
+  return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
+};
+const _id_ = /* @__PURE__ */ _export_sfc(_sfc_main, [["ssrRender", _sfc_ssrRender]]);
+export {
+  _id_ as default
+};
+//# sourceMappingURL=_id_-C1PovRVi.js.map

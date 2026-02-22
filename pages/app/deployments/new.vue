@@ -16,11 +16,11 @@
       <div>
         <label class="app-label">Type</label>
         <div class="flex gap-6">
-          <label class="flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-white transition-colors">
+          <label class="flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-zinc-900 transition-colors">
             <input v-model="form.type" type="radio" value="api" class="rounded border-border text-accent focus:ring-accent/30" />
             <span>API endpoint</span>
           </label>
-          <label class="flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-white transition-colors">
+          <label class="flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-zinc-900 transition-colors">
             <input v-model="form.type" type="radio" value="export" class="rounded border-border text-accent focus:ring-accent/30" />
             <span>Export weights</span>
           </label>
@@ -33,6 +33,7 @@
           <option value="eu-west-1">eu-west-1</option>
         </select>
       </div>
+      <p v-if="error" class="app-error">{{ error }}</p>
       <div class="flex flex-wrap gap-3 pt-1">
         <AppButton type="submit" :disabled="loading">
           {{ loading ? 'Deploying…' : form.type === 'api' ? 'Deploy to API' : 'Export weights' }}
@@ -54,6 +55,7 @@ export default defineComponent({
     return {
       form: { model_version_id: 'mv_1', type: 'api' as 'api' | 'export', region: 'us-east-1' },
       loading: false,
+      error: '',
     }
   },
   setup() {
@@ -62,6 +64,7 @@ export default defineComponent({
   },
   methods: {
     async onSubmit() {
+      this.error = ''
       this.loading = true
       try {
         await this.apiFetch('/api/deploy', {
@@ -73,6 +76,8 @@ export default defineComponent({
           },
         })
         await navigateTo('/app/deployments')
+      } catch (e) {
+        this.error = (e as Error).message || 'Deploy failed'
       } finally {
         this.loading = false
       }

@@ -20,7 +20,7 @@
         </thead>
         <tbody>
           <tr v-for="p in projects" :key="p.id">
-            <td class="font-medium text-white">{{ p.name }}</td>
+            <td class="font-medium text-zinc-900">{{ p.name }}</td>
             <td class="text-muted-foreground">{{ p.base_model }}</td>
             <td class="text-muted-foreground">{{ p.objective }}</td>
             <td class="text-muted text-sm">{{ formatDate(p.created_at) }}</td>

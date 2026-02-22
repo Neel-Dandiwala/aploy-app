@@ -1,1 +1,0 @@
-import{e as s,o as a,c as o,p as t,k as r}from"./eG_W-IWR.js";import{_ as n}from"./DlAUqK2U.js";const p=s({name:"AppCard",inheritAttrs:!1});function c(e,_,l,i,m,d){return a(),o("div",{class:r(["app-card",e.$attrs.class])},[t(e.$slots,"default")],2)}const u=n(p,[["render",c]]);export{u as _};

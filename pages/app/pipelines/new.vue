@@ -84,6 +84,7 @@
         </div>
         <AppButton type="button" variant="secondary" class="mt-2" @click="addStep">Add step</AppButton>
       </div>
+      <p v-if="error" class="app-error">{{ error }}</p>
       <div class="flex gap-3">
         <AppButton type="submit" :disabled="loading">{{ loading ? 'Creating…' : 'Create pipeline' }}</AppButton>
         <AppButton variant="secondary" to="/app/pipelines">Cancel</AppButton>
@@ -125,6 +126,7 @@ export default defineComponent({
       deployments: [] as DeploymentItem[],
       knowledgeBases: [] as KnowledgeBaseItem[],
       loading: false,
+      error: '',
     }
   },
   setup() {
@@ -187,6 +189,7 @@ export default defineComponent({
       })
     },
     async onSubmit() {
+      this.error = ''
       this.loading = true
       try {
         const data = await this.apiFetch<{ id: string }>('/api/pipelines', {
@@ -198,6 +201,8 @@ export default defineComponent({
           },
         })
         await navigateTo(`/app/pipelines/${data.id}`)
+      } catch (e) {
+        this.error = (e as Error).message || 'Failed to create pipeline'
       } finally {
         this.loading = false
       }

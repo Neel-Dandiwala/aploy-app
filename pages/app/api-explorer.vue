@@ -144,16 +144,24 @@ export default defineComponent({
       this.response = null
       this.responseStatus = null
       this.responseTime = null
-      const config = useRuntimeConfig()
-      const apiUrl = (config.public.apiUrl as string) || 'http://localhost:4000'
-      const url = `${apiUrl.replace(/\/$/, '')}/v1/deployments/${this.selectedDeploymentId}/invoke`
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'X-Environment': this.environment?.value ?? 'production',
-      }
-      if (this.apiKey.trim()) headers.Authorization = `Bearer ${this.apiKey.trim()}`
       const start = Date.now()
       try {
+        if (this.mockMode?.value) {
+          await new Promise((r) => setTimeout(r, 300))
+          this.responseStatus = 200
+          this.response = JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Mock response from deployed model.' } }] }, null, 2)
+          this.responseTime = Date.now() - start
+          this.sending = false
+          return
+        }
+        const config = useRuntimeConfig()
+        const apiUrl = (config.public.apiUrl as string) || 'http://localhost:4000'
+        const url = `${apiUrl.replace(/\/$/, '')}/v1/deployments/${this.selectedDeploymentId}/invoke`
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'X-Environment': this.environment?.value ?? 'production',
+        }
+        if (this.apiKey.trim()) headers.Authorization = `Bearer ${this.apiKey.trim()}`
         const res = await $fetch<string>(url, {
           method: 'POST',
           body,
@@ -196,7 +204,8 @@ export default defineComponent({
   },
   setup() {
     const { apiFetch, apiUrl, environment } = useAployApi()
-    return { apiFetch, apiUrl, environment }
+    const { mockMode } = useMockMode()
+    return { apiFetch, apiUrl, environment, mockMode }
   },
 })
 </script>

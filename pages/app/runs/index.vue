@@ -16,7 +16,7 @@
         </thead>
         <tbody>
           <tr v-for="r in runs" :key="r.id">
-            <td class="font-mono text-white text-sm">{{ r.id }}</td>
+            <td class="font-mono text-zinc-900 text-sm">{{ r.id }}</td>
             <td :class="r.status === 'succeeded' ? 'text-emerald-500' : 'text-amber-500'">{{ r.status }}</td>
             <td class="text-muted-foreground">{{ r.duration_sec ? `${Math.round(r.duration_sec / 3600)}h` : '—' }}</td>
             <td class="text-muted-foreground">{{ r.cost_usd != null ? `$${r.cost_usd}` : '—' }}</td>

@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           <tr v-for="d in deployments" :key="d.id">
-            <td class="font-mono text-white text-sm">{{ d.id }}</td>
+            <td class="font-mono text-zinc-900 text-sm">{{ d.id }}</td>
             <td class="text-muted-foreground">{{ d.model_version_id }}</td>
             <td class="text-emerald-500">{{ d.status }}</td>
             <td class="text-muted-foreground font-mono text-sm">{{ d.endpoint_url }}</td>

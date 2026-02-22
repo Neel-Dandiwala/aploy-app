@@ -13,7 +13,7 @@
         </thead>
         <tbody>
           <tr v-for="m in models" :key="m.id">
-            <td class="font-mono text-white text-sm">{{ m.id }}</td>
+            <td class="font-mono text-zinc-900 text-sm">{{ m.id }}</td>
             <td class="text-muted-foreground">{{ m.run_id }}</td>
             <td class="text-muted text-sm">{{ m.created_at }}</td>
             <td>

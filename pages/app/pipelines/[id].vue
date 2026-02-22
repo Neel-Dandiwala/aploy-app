@@ -74,7 +74,8 @@ export default defineComponent({
   },
   setup() {
     const { apiFetch, apiUrl, environment } = useAployApi()
-    return { apiFetch, apiUrl, environment }
+    const { mockMode } = useMockMode()
+    return { apiFetch, apiUrl, environment, mockMode }
   },
   async mounted() {
     await this.load()
@@ -103,10 +104,15 @@ export default defineComponent({
       }
       this.running = true
       this.testOutput = null
-      const config = useRuntimeConfig()
-      const base = (config.public.apiUrl as string) || 'http://localhost:4000'
-      const url = `${base.replace(/\/$/, '')}/v1/pipelines/${this.pipeline.id}/invoke`
       try {
+        if (this.mockMode?.value) {
+          await new Promise((r) => setTimeout(r, 400))
+          this.testOutput = { result: 'Mock pipeline output', input }
+          return
+        }
+        const config = useRuntimeConfig()
+        const base = (config.public.apiUrl as string) || 'http://localhost:4000'
+        const url = `${base.replace(/\/$/, '')}/v1/pipelines/${this.pipeline.id}/invoke`
         const res = await $fetch<{ output?: unknown; steps?: unknown; error?: string }>(url, {
           method: 'POST',
           body: input,

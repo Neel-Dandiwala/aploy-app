@@ -1,15 +1,15 @@
 <template>
   <div class="flex min-h-screen bg-surface">
-    <aside class="w-56 shrink-0 flex flex-col border-r border-border">
+    <aside class="w-56 shrink-0 flex flex-col border-r border-border bg-surface-elevated">
       <div class="p-4 border-b border-border">
-        <NuxtLink to="/" class="text-lg font-semibold text-white tracking-tight">Aploy</NuxtLink>
+        <NuxtLink to="/" class="text-lg font-semibold text-zinc-900 tracking-tight transition-colors hover:text-accent">Aploy</NuxtLink>
       </div>
       <nav class="flex-1 p-3 space-y-0.5">
         <NuxtLink
           v-for="item in nav"
           :key="item.href"
           :to="item.href"
-          class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-white/[0.04] hover:text-white transition-colors"
+          class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 transition-colors duration-app"
         >
           {{ item.label }}
         </NuxtLink>
@@ -17,7 +17,7 @@
       <div class="p-3 border-t border-border">
         <NuxtLink
           to="/"
-          class="flex items-center rounded-app px-3 py-2 text-sm text-muted hover:text-muted-foreground transition-colors"
+          class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 transition-colors duration-app"
         >
           Back to home
         </NuxtLink>

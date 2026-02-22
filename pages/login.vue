@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col items-center justify-center gap-6 p-8 bg-surface">
-    <h1 class="text-2xl font-semibold text-white tracking-tight">Sign in to Aploy</h1>
+    <h1 class="text-2xl font-semibold text-zinc-900 tracking-tight">Sign in to Aploy</h1>
     <p class="text-muted-foreground text-sm text-center max-w-sm">
       Use Google with MFA for secure access.
     </p>

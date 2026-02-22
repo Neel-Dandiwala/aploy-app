@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           <tr v-for="kb in knowledgeBases" :key="kb.id">
-            <td class="font-medium text-white">{{ kb.name }}</td>
+            <td class="font-medium text-zinc-900">{{ kb.name }}</td>
             <td :class="statusClass(kb.status)">{{ kb.status }}</td>
             <td class="text-muted-foreground">{{ kb.chunk_count ?? '—' }}</td>
             <td>

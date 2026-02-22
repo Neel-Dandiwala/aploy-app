@@ -9,7 +9,7 @@
       @click="open = !open"
     >
       <template v-if="open">
-        <span class="text-sm font-medium text-white">Aploy assistant</span>
+        <span class="text-sm font-medium text-zinc-900">Aploy assistant</span>
         <span class="text-muted text-xs">◀</span>
       </template>
       <template v-else>
@@ -102,6 +102,10 @@ export default defineComponent({
       })
     },
   },
+  setup() {
+    const { mockMode } = useMockMode()
+    return { mockMode }
+  },
   methods: {
     async send() {
       const text = this.input.trim()
@@ -109,9 +113,22 @@ export default defineComponent({
       this.input = ''
       this.messages.push({ role: 'user', content: text })
       this.loading = true
-      const config = useRuntimeConfig()
-      const apiUrl = config.public.apiUrl as string
       try {
+        if (this.mockMode?.value) {
+          await new Promise((r) => setTimeout(r, 400))
+          this.messages.push({
+            role: 'assistant',
+            content: "I've created the project and added a dataset. You can start a training run from the Runs page, then deploy from Deployments.",
+            actions: [
+              { action: 'create_project', result: { id: 'proj_mock1' } },
+              { action: 'add_dataset', result: { id: 'ds_mock1' } },
+            ],
+          })
+          this.loading = false
+          return
+        }
+        const config = useRuntimeConfig()
+        const apiUrl = config.public.apiUrl as string
         const data = await $fetch<{ reply: string; actions_taken?: Array<{ action: string; result: unknown }> }>(`${apiUrl}/api/chat`, {
           method: 'POST',
           credentials: 'include',

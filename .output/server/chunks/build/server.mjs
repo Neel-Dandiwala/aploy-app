@@ -391,10 +391,23 @@ const unhead_k2P3m_ZDyjlr2mMYnoDPwavjsDN8hBlk9cFai0bbopU = /* @__PURE__ */ defin
 function toArray(value) {
   return Array.isArray(value) ? value : [value];
 }
-const matcher = (m, p) => {
-  return [];
-};
-const _routeRulesMatcher = (path) => defu({}, ...matcher().map((r) => r.data).reverse());
+const matcher = /* @__PURE__ */ (() => {
+  const $0 = {};
+  return (m, p) => {
+    let r = [];
+    if (p.charCodeAt(p.length - 1) === 47) p = p.slice(0, -1) || "/";
+    if (p === "/app") {
+      r.unshift({ data: $0 });
+    }
+    let s = p.split("/");
+    s.length - 1;
+    if (s[1] === "app") {
+      r.unshift({ data: $0, params: { "_": s.slice(2).join("/") } });
+    }
+    return r;
+  };
+})();
+const _routeRulesMatcher = (path) => defu({}, ...matcher("", path).map((r) => r.data).reverse());
 const routeRulesMatcher$1 = _routeRulesMatcher;
 function getRouteRules(arg) {
   const path = typeof arg === "string" ? arg : arg.path;
@@ -405,6 +418,15 @@ function getRouteRules(arg) {
     return {};
   }
 }
+const __nuxt_page_meta$q = { layout: "app" };
+const __nuxt_page_meta$p = { layout: "app" };
+const __nuxt_page_meta$o = { layout: "app" };
+const __nuxt_page_meta$n = { layout: "app" };
+const __nuxt_page_meta$m = { layout: "app" };
+const __nuxt_page_meta$l = { layout: "app" };
+const __nuxt_page_meta$k = { layout: "app" };
+const __nuxt_page_meta$j = { layout: "app" };
+const __nuxt_page_meta$i = { layout: "app" };
 const __nuxt_page_meta$h = { layout: "app" };
 const __nuxt_page_meta$g = { layout: "app" };
 const __nuxt_page_meta$f = { layout: "app" };
@@ -427,125 +449,179 @@ const _routes = [
   {
     name: "index",
     path: "/",
-    component: () => import('./index-B0z9K_CZ.mjs')
+    component: () => import('./index-CyNfF1iO.mjs')
   },
   {
     name: "login",
     path: "/login",
-    component: () => import('./login-CT3rpmeU.mjs')
+    component: () => import('./login-BwhzcA92.mjs')
   },
   {
     name: "app-org",
     path: "/app/org",
-    meta: __nuxt_page_meta$h || {},
-    component: () => import('./org-BjPXPuYD.mjs')
+    meta: __nuxt_page_meta$q || {},
+    component: () => import('./org-B0cgc8el.mjs')
   },
   {
     name: "app",
     path: "/app",
-    meta: __nuxt_page_meta$g || {},
-    component: () => import('./index-Cw5Sw8aU.mjs')
+    meta: __nuxt_page_meta$p || {},
+    component: () => import('./index-BFoamsBL.mjs')
   },
   {
     name: "app-billing",
     path: "/app/billing",
-    meta: __nuxt_page_meta$f || {},
-    component: () => import('./billing-BOsDWi8f.mjs')
+    meta: __nuxt_page_meta$o || {},
+    component: () => import('./billing-DwNK-DkQ.mjs')
   },
   {
     name: "app-settings",
     path: "/app/settings",
-    meta: __nuxt_page_meta$e || {},
-    component: () => import('./settings-BAGP9k-k.mjs')
+    meta: __nuxt_page_meta$n || {},
+    component: () => import('./settings-CkfSxZMQ.mjs')
   },
   {
     name: "app-runs-id",
     path: "/app/runs/:id()",
-    meta: __nuxt_page_meta$d || {},
-    component: () => import('./_id_-ag126SLF.mjs')
+    meta: __nuxt_page_meta$m || {},
+    component: () => import('./_id_-Dhquuj0C.mjs')
   },
   {
     name: "auth-callback",
     path: "/auth/callback",
-    component: () => import('./callback-ssaxVS8r.mjs')
+    component: () => import('./callback-Rhv5kD-e.mjs')
   },
   {
     name: "app-runs",
     path: "/app/runs",
-    meta: __nuxt_page_meta$c || {},
-    component: () => import('./index-CrfOLowc.mjs')
+    meta: __nuxt_page_meta$l || {},
+    component: () => import('./index-BIVdwi35.mjs')
+  },
+  {
+    name: "app-api-explorer",
+    path: "/app/api-explorer",
+    meta: __nuxt_page_meta$k || {},
+    component: () => import('./api-explorer-DE7tGIc9.mjs')
   },
   {
     name: "app-datasets-new",
     path: "/app/datasets/new",
-    meta: __nuxt_page_meta$b || {},
-    component: () => import('./new-CnnugUMm.mjs')
+    meta: __nuxt_page_meta$j || {},
+    component: () => import('./new-C8K0xz7R.mjs')
+  },
+  {
+    name: "app-integrations",
+    path: "/app/integrations",
+    meta: __nuxt_page_meta$i || {},
+    component: () => import('./integrations-CkK6QSGo.mjs')
   },
   {
     name: "app-projects-new",
     path: "/app/projects/new",
-    meta: __nuxt_page_meta$a || {},
-    component: () => import('./new-DwSYaqjo.mjs')
+    meta: __nuxt_page_meta$h || {},
+    component: () => import('./new-DxOR8Rpy.mjs')
   },
   {
     name: "app-training-new",
     path: "/app/training/new",
-    meta: __nuxt_page_meta$9 || {},
-    component: () => import('./new-5OneXaBB.mjs')
+    meta: __nuxt_page_meta$g || {},
+    component: () => import('./new-dFhTBbbi.mjs')
   },
   {
     name: "app-datasets-id",
     path: "/app/datasets/:id()",
-    meta: __nuxt_page_meta$8 || {},
-    component: () => import('./_id_-DAbqXafs.mjs')
+    meta: __nuxt_page_meta$f || {},
+    component: () => import('./_id_-CDTxS90F.mjs')
+  },
+  {
+    name: "app-pipelines-new",
+    path: "/app/pipelines/new",
+    meta: __nuxt_page_meta$e || {},
+    component: () => import('./new-DdaWsMTd.mjs')
   },
   {
     name: "app-projects-id",
     path: "/app/projects/:id()",
-    meta: __nuxt_page_meta$7 || {},
-    component: () => import('./_id_-C1PovRVi.mjs')
+    meta: __nuxt_page_meta$d || {},
+    component: () => import('./_id_-CEBsbsSg.mjs')
   },
   {
     name: "app-registry-id",
     path: "/app/registry/:id()",
-    meta: __nuxt_page_meta$6 || {},
-    component: () => import('./_id_-DBnR0bUs.mjs')
+    meta: __nuxt_page_meta$c || {},
+    component: () => import('./_id_-DuIydg-L.mjs')
   },
   {
     name: "app-datasets",
     path: "/app/datasets",
-    meta: __nuxt_page_meta$5 || {},
-    component: () => import('./index-DAeUGMsg.mjs')
+    meta: __nuxt_page_meta$b || {},
+    component: () => import('./index-B7f7WKK_.mjs')
+  },
+  {
+    name: "app-pipelines-id",
+    path: "/app/pipelines/:id()",
+    meta: __nuxt_page_meta$a || {},
+    component: () => import('./_id_-BISbpQ1a.mjs')
   },
   {
     name: "app-projects",
     path: "/app/projects",
-    meta: __nuxt_page_meta$4 || {},
-    component: () => import('./index-DFYCXjKC.mjs')
+    meta: __nuxt_page_meta$9 || {},
+    component: () => import('./index-C4sascTr.mjs')
   },
   {
     name: "app-registry",
     path: "/app/registry",
-    meta: __nuxt_page_meta$3 || {},
-    component: () => import('./index-d-Yoxj3D.mjs')
+    meta: __nuxt_page_meta$8 || {},
+    component: () => import('./index-D8UPpvaR.mjs')
+  },
+  {
+    name: "app-triggers",
+    path: "/app/triggers",
+    meta: __nuxt_page_meta$7 || {},
+    component: () => import('./index-CsU1oxMO.mjs')
   },
   {
     name: "app-deployments-new",
     path: "/app/deployments/new",
-    meta: __nuxt_page_meta$2 || {},
-    component: () => import('./new-BZNSe0rf.mjs')
+    meta: __nuxt_page_meta$6 || {},
+    component: () => import('./new-DSAh-cjY.mjs')
+  },
+  {
+    name: "app-pipelines",
+    path: "/app/pipelines",
+    meta: __nuxt_page_meta$5 || {},
+    component: () => import('./index-p4Q_OfQD.mjs')
   },
   {
     name: "app-deployments",
     path: "/app/deployments",
-    meta: __nuxt_page_meta$1 || {},
-    component: () => import('./index-Bl93NEQ0.mjs')
+    meta: __nuxt_page_meta$4 || {},
+    component: () => import('./index-D6POz_kj.mjs')
   },
   {
     name: "app-evaluations",
     path: "/app/evaluations",
+    meta: __nuxt_page_meta$3 || {},
+    component: () => import('./index-MwOUdiA4.mjs')
+  },
+  {
+    name: "app-knowledge-bases-new",
+    path: "/app/knowledge-bases/new",
+    meta: __nuxt_page_meta$2 || {},
+    component: () => import('./new-DbuZej7q.mjs')
+  },
+  {
+    name: "app-knowledge-bases-id",
+    path: "/app/knowledge-bases/:id()",
+    meta: __nuxt_page_meta$1 || {},
+    component: () => import('./_id_-D5dmGHNJ.mjs')
+  },
+  {
+    name: "app-knowledge-bases",
+    path: "/app/knowledge-bases",
     meta: __nuxt_page_meta || {},
-    component: () => import('./index-C6K3lcsS.mjs')
+    component: () => import('./index-DRVse6sn.mjs')
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -908,9 +984,9 @@ const plugins = [
   components_plugin_z4hgvsiddfKkfXTP6M8M4zG5Cb7sGnDhcryKVM45Di4
 ];
 const layouts = {
-  app: defineAsyncComponent(() => import('./app-DQfRIVGN.mjs').then((m) => m.default || m)),
-  blank: defineAsyncComponent(() => import('./blank-B6n380GX.mjs').then((m) => m.default || m)),
-  default: defineAsyncComponent(() => import('./default-DrO96YvB.mjs').then((m) => m.default || m))
+  app: defineAsyncComponent(() => import('./app-B2wLlbJn.mjs').then((m) => m.default || m)),
+  blank: defineAsyncComponent(() => import('./blank-CzB9dL-u.mjs').then((m) => m.default || m)),
+  default: defineAsyncComponent(() => import('./default-fpJzbRNM.mjs').then((m) => m.default || m))
 };
 const routeRulesMatcher = _routeRulesMatcher;
 const LayoutLoader = defineComponent({
@@ -1176,7 +1252,7 @@ const _sfc_main$1 = {
     const statusText = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import('./error-404-CrL8Op6m.mjs'));
+    const _Error404 = defineAsyncComponent(() => import('./error-404-xnlRwrLt.mjs'));
     const _Error = defineAsyncComponent(() => import('./error-500-c0fUoe7M.mjs'));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
@@ -1258,5 +1334,5 @@ let entry;
 }
 const entry_default = ((ssrContext) => entry(ssrContext));
 
-export { useRuntimeConfig as a, useNuxtApp as b, useRouter as c, nuxtLinkDefaults as d, entry_default as default, encodeRoutePath as e, navigateTo as n, resolveRouteObject as r, useHead as u };
+export { useRuntimeConfig as a, useRouter as b, useNuxtApp as c, nuxtLinkDefaults as d, entry_default as default, encodeRoutePath as e, navigateTo as n, resolveRouteObject as r, useHead as u };
 //# sourceMappingURL=server.mjs.map

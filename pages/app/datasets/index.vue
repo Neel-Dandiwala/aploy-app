@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           <tr v-for="d in datasets" :key="d.id">
-            <td class="font-medium text-white">{{ d.name }}</td>
+            <td class="font-medium text-zinc-900">{{ d.name }}</td>
             <td class="text-emerald-500">{{ d.status }}</td>
             <td class="text-muted-foreground">{{ d.row_count?.toLocaleString() }}</td>
             <td>

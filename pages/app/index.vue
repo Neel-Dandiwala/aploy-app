@@ -19,7 +19,7 @@
             {{ step.step }}
           </span>
           <div class="flex-1 min-w-0">
-            <p class="font-medium text-white">{{ step.title }}</p>
+            <p class="font-medium text-zinc-900">{{ step.title }}</p>
             <p class="text-muted-foreground text-sm mt-0.5">{{ step.desc }}</p>
             <NuxtLink
               :to="step.href"
@@ -38,7 +38,7 @@
         class="p-5"
       >
         <h3 class="app-section-title">{{ stat.label }}</h3>
-        <p class="text-xl font-semibold text-white mt-1">{{ stat.value }}</p>
+        <p class="text-xl font-semibold text-zinc-900 mt-1">{{ stat.value }}</p>
         <NuxtLink
           :to="stat.href"
           class="text-sm text-accent hover:text-accent-hover mt-2 inline-block transition-colors"
@@ -47,7 +47,17 @@
         </NuxtLink>
       </AppCard>
     </div>
-    <AppButton to="/app/projects/new">Create project</AppButton>
+    <div class="flex flex-wrap items-center gap-4">
+      <AppButton to="/app/projects/new">Create project</AppButton>
+      <button
+        v-if="mockMode"
+        type="button"
+        class="text-xs text-muted-foreground hover:text-destructive transition-colors underline"
+        @click="simulateErrorNext"
+      >
+        Simulate error (next request)
+      </button>
+    </div>
   </div>
 </template>
 
@@ -58,6 +68,14 @@ definePageMeta({ layout: 'app' })
 
 export default defineComponent({
   name: 'AppDashboard',
+  setup() {
+    const { mockMode } = useMockMode()
+    const { setSimulateErrorNext } = useMockApi()
+    function simulateErrorNext() {
+      setSimulateErrorNext()
+    }
+    return { mockMode, simulateErrorNext }
+  },
   data() {
     return {
       journeySteps: [

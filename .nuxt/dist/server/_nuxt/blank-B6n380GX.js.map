@@ -1,1 +1,0 @@
-{"version":3,"file":"blank-B6n380GX.js","sources":["../../../../layouts/blank.vue"],"sourcesContent":["<template>\n  <div class=\"min-h-screen bg-[#0a0a0f]\">\n    <slot />\n  </div>\n</template>\n"],"names":["_ssrRenderAttrs","_mergeProps"],"mappings":";;;;;AACO,QAAA,OAAAA,eAAAC,WAAA,EAAA,OAAM,+BAA2B,MAAA,CAAA,CAAA,GAAA;;;;;;;;;;;"}

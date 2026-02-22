@@ -31,6 +31,7 @@
           <option :value="32">32</option>
         </select>
       </div>
+      <p v-if="error" class="app-error">{{ error }}</p>
       <div class="flex flex-wrap gap-3 pt-1">
         <AppButton type="submit" :disabled="loading">
           {{ loading ? 'Starting…' : 'Start training' }}
@@ -52,6 +53,7 @@ export default defineComponent({
     return {
       form: { dataset_version_id: 'dsv_1', epochs: 3, lora_rank: 16, compute_mode: 'auto' },
       loading: false,
+      error: '',
     }
   },
   setup() {
@@ -60,6 +62,7 @@ export default defineComponent({
   },
   methods: {
     async onSubmit() {
+      this.error = ''
       this.loading = true
       try {
         const data = await this.apiFetch<{ id: string }>('/api/runs', {
@@ -72,6 +75,8 @@ export default defineComponent({
           },
         })
         await navigateTo(`/app/runs/${data.id}`)
+      } catch (e) {
+        this.error = (e as Error).message || 'Failed to start training'
       } finally {
         this.loading = false
       }

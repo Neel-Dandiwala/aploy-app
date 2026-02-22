@@ -41,6 +41,7 @@
           <input v-model="form.hfDataset" class="app-input mt-2" placeholder="Dataset (e.g. username/dataset_name)" />
         </template>
       </div>
+      <p v-if="error" class="app-error">{{ error }}</p>
       <div class="flex flex-wrap gap-3 pt-1">
         <AppButton type="submit" :disabled="loading">
           {{ loading ? 'Starting…' : 'Create dataset' }}
@@ -72,6 +73,7 @@ export default defineComponent({
       },
       credentials: [] as Credential[],
       loading: false,
+      error: '',
     }
   },
   computed: {
@@ -96,6 +98,7 @@ export default defineComponent({
   },
   methods: {
     async onSubmit() {
+      this.error = ''
       this.loading = true
       const body: Record<string, unknown> = { name: this.form.name || 'Untitled dataset', schema_ref: 'chat' }
       if (this.form.sourceType === 's3') {
@@ -124,6 +127,8 @@ export default defineComponent({
       try {
         const data = await this.apiFetch<{ id: string }>('/api/datasets', { method: 'POST', body })
         await navigateTo(`/app/datasets/${data.id}`)
+      } catch (e) {
+        this.error = (e as Error).message || 'Failed to create dataset'
       } finally {
         this.loading = false
       }

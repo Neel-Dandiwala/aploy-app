@@ -36,6 +36,7 @@
         <label class="app-label">Chunk overlap</label>
         <input v-model.number="form.chunkOverlap" type="number" min="0" max="512" class="app-input" placeholder="64" />
       </div>
+      <p v-if="error" class="app-error">{{ error }}</p>
       <div class="flex gap-3">
         <AppButton type="submit" :disabled="loading">{{ loading ? 'Creating…' : 'Create knowledge base' }}</AppButton>
         <AppButton variant="secondary" to="/app/knowledge-bases">Cancel</AppButton>
@@ -66,6 +67,7 @@ export default defineComponent({
       },
       credentials: [] as Credential[],
       loading: false,
+      error: '',
     }
   },
   setup() {
@@ -82,6 +84,7 @@ export default defineComponent({
   },
   methods: {
     async onSubmit() {
+      this.error = ''
       this.loading = true
       try {
         const source: Record<string, unknown> = { type: this.form.sourceType }
@@ -99,6 +102,8 @@ export default defineComponent({
           },
         })
         await navigateTo(`/app/knowledge-bases/${data.id}`)
+      } catch (e) {
+        this.error = (e as Error).message || 'Failed to create knowledge base'
       } finally {
         this.loading = false
       }

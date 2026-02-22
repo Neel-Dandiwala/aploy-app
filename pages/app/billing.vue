@@ -9,7 +9,7 @@
           <li>Period: {{ usage.period_start }} – {{ usage.period_end }}</li>
           <li>Compute (GPU hours): {{ usage.compute_gpu_hours }} — ${{ (usage.compute_gpu_hours * 1.56).toFixed(2) }}</li>
           <li>Storage (GB-months): {{ usage.storage_gb_months }} — ${{ (usage.storage_gb_months * 0.036).toFixed(2) }}</li>
-          <li><strong class="text-white">Total: ${{ usage.total_usd.toFixed(2) }}</strong></li>
+          <li><strong class="text-zinc-900">Total: ${{ usage.total_usd.toFixed(2) }}</strong></li>
         </ul>
         <p class="text-muted text-sm mt-4">Forecast: ~${{ (usage.forecast_usd ?? usage.total_usd).toFixed(2) }}</p>
         <AppButton v-if="!stripeConnected" class="mt-4" variant="secondary" :disabled="settingUp" @click="setupCustomer">

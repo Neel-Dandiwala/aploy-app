@@ -32,4 +32,6 @@ export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composab
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
 export { useAployApi } from '../composables/useAployApi';
 export { useEnvironment, Environment } from '../composables/useEnvironment';
+export { MOCK_IDS, setSimulateErrorNext, mockFetch, useMockApi } from '../composables/useMockApi';
+export { useMockMode } from '../composables/useMockMode';
 export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';

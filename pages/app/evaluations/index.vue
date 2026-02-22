@@ -16,14 +16,14 @@
         <tbody>
           <tr>
             <td class="text-muted-foreground">Perplexity</td>
-            <td class="text-white">12.4</td>
-            <td class="text-white">10.1</td>
+            <td class="text-zinc-900">12.4</td>
+            <td class="text-zinc-900">10.1</td>
             <td class="text-emerald-500">-18.5%</td>
           </tr>
           <tr>
             <td class="text-muted-foreground">Support accuracy</td>
-            <td class="text-white">0.72</td>
-            <td class="text-white">0.84</td>
+            <td class="text-zinc-900">0.72</td>
+            <td class="text-zinc-900">0.84</td>
             <td class="text-emerald-500">+16.7%</td>
           </tr>
         </tbody>

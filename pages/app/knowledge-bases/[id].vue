@@ -99,7 +99,8 @@ export default defineComponent({
   setup() {
     const { apiFetch, apiUrl } = useAployApi()
     const { environment } = useEnvironment()
-    return { apiFetch, apiUrl, environment }
+    const { mockMode } = useMockMode()
+    return { apiFetch, apiUrl, environment, mockMode }
   },
   async mounted() {
     await this.load()
@@ -137,6 +138,14 @@ export default defineComponent({
       if (!this.kb || !this.selectedFiles.length) return
       this.ingesting = true
       try {
+        if (this.mockMode?.value) {
+          await new Promise((r) => setTimeout(r, 500))
+          this.selectedFiles = []
+          const input = this.$refs.fileInput as HTMLInputElement | undefined
+          if (input) input.value = ''
+          await this.load()
+          return
+        }
         const config = useRuntimeConfig()
         const base = (config.public.apiUrl as string) || 'http://localhost:4000'
         const url = `${base.replace(/\/$/, '')}/api/knowledge-bases/${this.kb.id}/ingest`

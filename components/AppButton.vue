@@ -30,15 +30,15 @@
 import { defineComponent, computed } from 'vue'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-app px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent/30 focus:ring-offset-2 focus:ring-offset-surface disabled:pointer-events-none disabled:opacity-50'
+  'inline-flex items-center justify-center gap-2 rounded-app px-4 py-2 text-sm font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:ring-offset-2 focus:ring-offset-surface disabled:pointer-events-none disabled:opacity-50'
 
 const variants = {
   primary:
     'bg-accent text-white hover:bg-accent-hover shadow-app-sm',
   secondary:
-    'border border-border bg-surface-elevated text-muted-foreground hover:bg-surface-overlay hover:text-white hover:border-white/10',
+    'border border-border bg-surface-elevated text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 hover:border-border transition-colors',
   ghost:
-    'text-muted-foreground hover:bg-white/[0.06] hover:text-white',
+    'text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900',
 }
 
 const sizes = {

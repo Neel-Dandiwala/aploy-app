@@ -19,7 +19,7 @@
           <span class="text-muted-foreground text-sm ml-2">Pipeline {{ t.pipeline_id }}</span>
         </div>
         <div class="flex items-center gap-2">
-          <code v-if="t.webhook_url" class="text-xs bg-black/20 px-2 py-1 rounded break-all max-w-md">{{ t.webhook_url }}</code>
+          <code v-if="t.webhook_url" class="text-xs bg-surface-overlay px-2 py-1 rounded break-all max-w-md text-zinc-800">{{ t.webhook_url }}</code>
           <button type="button" class="text-destructive text-sm hover:underline" @click="deleteTrigger(t.id)">Delete</button>
         </div>
       </div>

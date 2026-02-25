@@ -8,13 +8,16 @@
     />
     <form @submit.prevent="onSubmit" class="space-y-6">
       <div>
-        <label class="app-label">Model version</label>
+        <label class="app-label">
+          <AppHelpTip tip="A trained model from a successful run. Pick the one you want to make available for calls.">Model version</AppHelpTip>
+        </label>
         <select v-model="form.model_version_id" class="app-select">
           <option value="mv_1">mv_1 (Support Bot, run_1)</option>
         </select>
       </div>
       <div>
-        <label class="app-label">Type</label>
+        <label class="app-label">How do you want to use this model?</label>
+        <p class="text-sm text-muted-foreground mb-2">We host your model and you get a URL to call, or you can download the weights to run elsewhere.</p>
         <div class="flex gap-6">
           <label class="flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-zinc-900 transition-colors">
             <input v-model="form.type" type="radio" value="api" class="rounded border-border text-accent focus:ring-accent/30" />
@@ -33,7 +36,10 @@
           <option value="eu-west-1">eu-west-1</option>
         </select>
       </div>
-      <p v-if="error" class="app-error">{{ error }}</p>
+      <div v-if="error">
+        <p class="app-error">What happened: {{ error }}</p>
+        <AppErrorRecovery :error="error" />
+      </div>
       <div class="flex flex-wrap gap-3 pt-1">
         <AppButton type="submit" :disabled="loading">
           {{ loading ? 'Deploying…' : form.type === 'api' ? 'Deploy to API' : 'Export weights' }}

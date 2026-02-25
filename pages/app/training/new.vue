@@ -2,36 +2,83 @@
   <div class="app-page-narrow">
     <AppPageHeader
       title="Configure training"
-      description="Select dataset version and config. Estimated ~$14.50, ~2h."
+      :description="costDescription"
       back-to="/app/projects/proj_demo1"
       back-label="Project"
     />
     <form @submit.prevent="onSubmit" class="space-y-6">
       <div>
-        <label class="app-label">Dataset version</label>
+        <label class="app-label">What do you want to achieve?</label>
+        <p class="text-sm text-muted-foreground mb-3">We'll apply recommended settings. You can change them in Advanced below.</p>
+        <div class="space-y-2">
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="trainingGoal" type="radio" value="chat" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">A model tuned for chat</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Best for support, sales, or any conversational use. Uses recommended epochs and adapter size.</p>
+            </div>
+          </label>
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="trainingGoal" type="radio" value="preferences" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">A model that learns your preferences</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Best when you have good vs. bad answer pairs. Uses settings suited for preference training.</p>
+            </div>
+          </label>
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="trainingGoal" type="radio" value="custom" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">I'll set my own (Advanced)</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Use recommended as a starting point, then adjust epochs and adapter size in Advanced.</p>
+            </div>
+          </label>
+        </div>
+        <AppButton type="button" variant="secondary" class="mt-3" @click="applyRecommended">
+          Use recommended settings
+        </AppButton>
+      </div>
+      <div>
+        <label class="app-label">
+          <AppHelpTip tip="A saved snapshot of your data. Creating a version locks the data so this training run is reproducible.">Dataset version</AppHelpTip>
+        </label>
         <select v-model="form.dataset_version_id" class="app-select">
           <option value="dsv_1">Support chat v1 (10,200 rows)</option>
         </select>
       </div>
-      <div>
-        <label class="app-label">Epochs</label>
-        <input
-          v-model.number="form.epochs"
-          type="number"
-          class="app-input"
-          min="1"
-          max="20"
-        />
+      <details class="rounded-app border border-border/50 overflow-hidden">
+        <summary class="app-label cursor-pointer px-4 py-3 bg-muted/30 hover:bg-muted/50 transition-colors list-none flex items-center gap-2">
+          <span class="inline-block w-4 h-4 text-muted-foreground">▶</span>
+          Advanced (epochs, adapter size)
+        </summary>
+        <div class="px-4 pb-4 pt-1 space-y-4 border-t border-border/50">
+          <div>
+            <label class="app-label">
+              <AppHelpTip tip="How many times we go through your data. More epochs can improve quality but take longer and cost more; 3 is usually a good start.">Epochs</AppHelpTip>
+            </label>
+            <input
+              v-model.number="form.epochs"
+              type="number"
+              class="app-input"
+              min="1"
+              max="20"
+            />
+          </div>
+          <div>
+            <label class="app-label">
+              <AppHelpTip tip="Adapter size — higher can fit more nuance but may overfit. Default 16 is usually best.">LoRA rank</AppHelpTip>
+            </label>
+            <select v-model.number="form.lora_rank" class="app-select">
+              <option :value="8">8</option>
+              <option :value="16">16</option>
+              <option :value="32">32</option>
+            </select>
+          </div>
+        </div>
+      </details>
+      <div v-if="error">
+        <p class="app-error">What happened: {{ error }}</p>
+        <AppErrorRecovery :error="error" />
       </div>
-      <div>
-        <label class="app-label">LoRA rank</label>
-        <select v-model.number="form.lora_rank" class="app-select">
-          <option :value="8">8</option>
-          <option :value="16">16</option>
-          <option :value="32">32</option>
-        </select>
-      </div>
-      <p v-if="error" class="app-error">{{ error }}</p>
       <div class="flex flex-wrap gap-3 pt-1">
         <AppButton type="submit" :disabled="loading">
           {{ loading ? 'Starting…' : 'Start training' }}
@@ -45,22 +92,37 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-definePageMeta({ layout: 'app' })
+const RECOMMENDED = { epochs: 3, lora_rank: 16 }
 
 export default defineComponent({
   name: 'NewTraining',
   data() {
     return {
-      form: { dataset_version_id: 'dsv_1', epochs: 3, lora_rank: 16, compute_mode: 'auto' },
+      trainingGoal: 'chat' as 'chat' | 'preferences' | 'custom',
+      form: { dataset_version_id: 'dsv_1', epochs: RECOMMENDED.epochs, lora_rank: RECOMMENDED.lora_rank, compute_mode: 'auto' as const },
       loading: false,
       error: '',
     }
+  },
+  computed: {
+    costDescription(): string {
+      return 'Select your data and goal. Estimated ~$14.50, ~2h. You\'ll get a model tuned for your use case, ready to deploy or compare in Evaluations.'
+    },
+  },
+  watch: {
+    trainingGoal(v: string) {
+      if (v === 'chat' || v === 'preferences') this.applyRecommended()
+    },
   },
   setup() {
     const { apiFetch } = useAployApi()
     return { apiFetch }
   },
   methods: {
+    applyRecommended() {
+      this.form.epochs = RECOMMENDED.epochs
+      this.form.lora_rank = RECOMMENDED.lora_rank
+    },
     async onSubmit() {
       this.error = ''
       this.loading = true

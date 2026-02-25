@@ -20,7 +20,11 @@
         <AppButton :disabled="running" @click="runTest">
           {{ running ? 'Running…' : 'Run pipeline' }}
         </AppButton>
-        <div v-if="testOutput !== null" class="mt-4 rounded bg-muted/50 p-3">
+        <div v-if="testError" class="mt-2">
+          <p class="app-error">What happened: {{ testError }}</p>
+          <AppErrorRecovery :error="testError" />
+        </div>
+        <div v-if="testOutput !== null && !testError" class="mt-4 rounded bg-muted/50 p-3">
           <p class="text-sm font-medium mb-2">Output</p>
           <pre class="text-xs overflow-auto max-h-[300px]">{{ testOutputText }}</pre>
         </div>
@@ -65,6 +69,12 @@ export default defineComponent({
     }
   },
   computed: {
+    testError(): string {
+      if (this.testOutput === null) return ''
+      if (typeof this.testOutput === 'object' && this.testOutput && 'error' in this.testOutput)
+        return String((this.testOutput as { error: string }).error)
+      return ''
+    },
     testOutputText(): string {
       if (this.testOutput === null) return ''
       return typeof this.testOutput === 'string'

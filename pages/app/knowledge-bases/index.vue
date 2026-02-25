@@ -33,9 +33,14 @@
           </tr>
         </tbody>
       </table>
-      <p v-if="!loading && !error && knowledgeBases.length === 0" class="app-empty">
-        No knowledge bases yet. Add one to get started.
-      </p>
+      <div v-if="!loading && !error && knowledgeBases.length === 0" class="app-empty text-center py-8 px-4">
+        <p class="font-medium text-zinc-900 mb-1">No knowledge bases yet</p>
+        <p class="text-sm text-muted-foreground mb-4">Knowledge bases store your documents so pipelines can search them (e.g. "chat with your docs"). Add one, then upload or connect a source.</p>
+        <AppButton to="/app/knowledge-bases/new">Add knowledge base</AppButton>
+        <p class="mt-3">
+          <NuxtLink to="/app/glossary" class="text-sm text-accent hover:text-accent-hover">Learn key concepts</NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>

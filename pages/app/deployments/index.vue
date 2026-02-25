@@ -1,7 +1,11 @@
 <template>
   <div class="app-page">
-    <AppPageHeader title="Deployments">
+    <AppPageHeader
+      title="Deployments"
+      description="Live models you can call. Use “Try it” to test with a simple prompt, or use the API for your app."
+    >
       <template #actions>
+        <AppButton to="/app/deployments/try">Try your model</AppButton>
         <AppButton to="/app/deployments/new">Deploy</AppButton>
       </template>
     </AppPageHeader>
@@ -15,6 +19,7 @@
             <th>Model</th>
             <th>Status</th>
             <th>Endpoint</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -23,12 +28,22 @@
             <td class="text-muted-foreground">{{ d.model_version_id }}</td>
             <td class="text-emerald-500">{{ d.status }}</td>
             <td class="text-muted-foreground font-mono text-sm">{{ d.endpoint_url }}</td>
+            <td>
+              <NuxtLink :to="`/app/deployments/try?deployment=${d.id}`" class="text-accent hover:text-accent-hover text-sm">
+                Try it
+              </NuxtLink>
+            </td>
           </tr>
         </tbody>
       </table>
-      <p v-if="!loading && !error && deployments.length === 0" class="app-empty">
-        No deployments yet.
-      </p>
+      <div v-if="!loading && !error && deployments.length === 0" class="app-empty text-center py-8 px-4">
+        <p class="font-medium text-zinc-900 mb-1">No deployments yet</p>
+        <p class="text-sm text-muted-foreground mb-4">Deploy a trained model to get a live URL you can call from your app or try in the browser. You can also export weights to run elsewhere.</p>
+        <AppButton to="/app/deployments/new">Deploy</AppButton>
+        <p class="mt-3">
+          <NuxtLink to="/app/glossary" class="text-sm text-accent hover:text-accent-hover">Learn key concepts</NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>

@@ -29,14 +29,43 @@
         </template>
       </div>
       <div>
-        <label class="app-label">Chunk size</label>
-        <input v-model.number="form.chunkSize" type="number" min="64" max="2048" class="app-input" placeholder="512" />
+        <label class="app-label">How we split your documents</label>
+        <p class="text-sm text-muted-foreground mb-2">Default is usually best. Only change if you have a specific need.</p>
+        <div class="space-y-2 mb-3">
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="chunkPreset" type="radio" value="recommended" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">Recommended (default)</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Chunk size 512, overlap 64. Works well for most docs.</p>
+            </div>
+          </label>
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="chunkPreset" type="radio" value="custom" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">Custom</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Set chunk size and overlap yourself.</p>
+            </div>
+          </label>
+        </div>
+        <div v-if="chunkPreset === 'custom'" class="space-y-3 pl-0 border-t border-border/50 pt-3">
+          <div>
+            <label class="app-label text-xs">
+              <AppHelpTip tip="Max characters per piece. See Concepts & glossary.">Chunk size</AppHelpTip>
+            </label>
+            <input v-model.number="form.chunkSize" type="number" min="64" max="2048" class="app-input" placeholder="512" />
+          </div>
+          <div>
+            <label class="app-label text-xs">
+              <AppHelpTip tip="Overlap between chunks so context isn't lost.">Chunk overlap</AppHelpTip>
+            </label>
+            <input v-model.number="form.chunkOverlap" type="number" min="0" max="512" class="app-input" placeholder="64" />
+          </div>
+        </div>
       </div>
-      <div>
-        <label class="app-label">Chunk overlap</label>
-        <input v-model.number="form.chunkOverlap" type="number" min="0" max="512" class="app-input" placeholder="64" />
+      <div v-if="error">
+        <p class="app-error">What happened: {{ error }}</p>
+        <AppErrorRecovery :error="error" />
       </div>
-      <p v-if="error" class="app-error">{{ error }}</p>
       <div class="flex gap-3">
         <AppButton type="submit" :disabled="loading">{{ loading ? 'Creating…' : 'Create knowledge base' }}</AppButton>
         <AppButton variant="secondary" to="/app/knowledge-bases">Cancel</AppButton>
@@ -56,6 +85,7 @@ export default defineComponent({
   name: 'NewKnowledgeBase',
   data() {
     return {
+      chunkPreset: 'recommended' as 'recommended' | 'custom',
       form: {
         name: '',
         sourceType: 'upload' as 'upload' | 's3' | 'gcs',
@@ -69,6 +99,14 @@ export default defineComponent({
       loading: false,
       error: '',
     }
+  },
+  watch: {
+    chunkPreset(v: string) {
+      if (v === 'recommended') {
+        this.form.chunkSize = 512
+        this.form.chunkOverlap = 64
+      }
+    },
   },
   setup() {
     const { apiFetch } = useAployApi()

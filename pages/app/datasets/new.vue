@@ -2,7 +2,7 @@
   <div class="app-page-narrow">
     <AppPageHeader
       title="Add dataset"
-      description="Upload or connect S3/GCS/Hugging Face. JSONL format."
+      description="Upload a file with your training examples, or connect a folder in the cloud. We accept JSONL: one JSON object per line."
       back-to="/app/datasets"
       back-label="Datasets"
     />
@@ -16,32 +16,80 @@
         />
       </div>
       <div>
-        <label class="app-label">Source</label>
-        <select v-model="form.sourceType" class="app-select">
-          <option value="upload">Upload</option>
-          <option value="s3">S3</option>
-          <option value="gcs">GCS</option>
-          <option value="hf">Hugging Face</option>
-        </select>
-        <template v-if="form.sourceType === 's3' || form.sourceType === 'gcs'">
-          <label class="app-label mt-2">Credential</label>
-          <select v-model="form.credentialId" class="app-select">
-            <option value="">Select credential</option>
-            <option v-for="c in credentialsByType" :key="c.id" :value="c.id">{{ c.name }} ({{ c.type }})</option>
-          </select>
-          <input v-model="form.bucket" class="app-input mt-2" placeholder="Bucket" />
-          <input v-model="form.prefix" class="app-input mt-2" placeholder="Prefix (optional)" />
-        </template>
-        <template v-else-if="form.sourceType === 'hf'">
-          <label class="app-label mt-2">Credential</label>
-          <select v-model="form.credentialId" class="app-select">
-            <option value="">Select credential</option>
-            <option v-for="c in hfCredentials" :key="c.id" :value="c.id">{{ c.name }}</option>
-          </select>
-          <input v-model="form.hfDataset" class="app-input mt-2" placeholder="Dataset (e.g. username/dataset_name)" />
-        </template>
+        <label class="app-label">How do you want to add your data?</label>
+        <p class="text-sm text-muted-foreground mb-3">Upload a file from your computer, or connect to cloud storage or Hugging Face.</p>
+        <div class="space-y-2 mb-4">
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="form.sourceType" type="radio" value="upload" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">Upload a file</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Best for getting started. Upload a JSONL file (one example per line). We'll validate and prepare it for training.</p>
+            </div>
+          </label>
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="form.sourceType" type="radio" value="s3" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">Connect S3 (AWS)</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Use a folder in an S3 bucket where your training data lives.</p>
+            </div>
+          </label>
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="form.sourceType" type="radio" value="gcs" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">Connect GCS (Google Cloud)</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Use a folder in Google Cloud Storage.</p>
+            </div>
+          </label>
+          <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+            <input v-model="form.sourceType" type="radio" value="hf" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
+            <div>
+              <span class="font-medium text-zinc-900">Connect Hugging Face</span>
+              <p class="text-sm text-muted-foreground mt-0.5">Use a dataset from the Hugging Face Hub.</p>
+            </div>
+          </label>
+        </div>
+        <div v-if="form.sourceType === 'upload'" class="rounded-app bg-muted/30 border border-border/50 p-4">
+          <p class="text-sm text-muted-foreground">
+            <strong class="text-zinc-900">JSONL format:</strong> One JSON object per line. Each line should have a <code class="text-xs bg-muted px-1 rounded">messages</code> array (for chat) or <code class="text-xs bg-muted px-1 rounded">instruction</code> / <code class="text-xs bg-muted px-1 rounded">response</code> fields. After you create the dataset, go to its page to upload the file and run ingestion.
+          </p>
+        </div>
+        <div v-else-if="form.sourceType === 's3' || form.sourceType === 'gcs'" class="rounded-app border border-border/50 p-4 space-y-3">
+          <p class="text-sm text-muted-foreground">Connect a folder in the cloud where your examples live. You'll need a credential (add one under Integrations).</p>
+          <div>
+            <label class="app-label text-xs">Credential</label>
+            <select v-model="form.credentialId" class="app-select">
+              <option value="">Select credential</option>
+              <option v-for="c in credentialsByType" :key="c.id" :value="c.id">{{ c.name }} ({{ c.type }})</option>
+            </select>
+          </div>
+          <div>
+            <label class="app-label text-xs">Bucket</label>
+            <input v-model="form.bucket" class="app-input" placeholder="my-bucket-name" />
+          </div>
+          <div>
+            <label class="app-label text-xs">Prefix (optional)</label>
+            <input v-model="form.prefix" class="app-input" placeholder="path/to/data/" />
+          </div>
+        </div>
+        <div v-else-if="form.sourceType === 'hf'" class="rounded-app border border-border/50 p-4 space-y-3">
+          <p class="text-sm text-muted-foreground">Use a dataset from the Hugging Face Hub. You'll need a Hugging Face token (add under Integrations).</p>
+          <div>
+            <label class="app-label text-xs">Credential</label>
+            <select v-model="form.credentialId" class="app-select">
+              <option value="">Select credential</option>
+              <option v-for="c in hfCredentials" :key="c.id" :value="c.id">{{ c.name }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="app-label text-xs">Dataset</label>
+            <input v-model="form.hfDataset" class="app-input" placeholder="username/dataset_name" />
+          </div>
+        </div>
       </div>
-      <p v-if="error" class="app-error">{{ error }}</p>
+      <div v-if="error">
+        <p class="app-error">What happened: {{ error }}</p>
+        <AppErrorRecovery :error="error" />
+      </div>
       <div class="flex flex-wrap gap-3 pt-1">
         <AppButton type="submit" :disabled="loading">
           {{ loading ? 'Starting…' : 'Create dataset' }}

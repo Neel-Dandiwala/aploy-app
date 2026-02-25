@@ -26,9 +26,14 @@
           </tr>
         </tbody>
       </table>
-      <p v-if="!loading && !error && pipelines.length === 0" class="app-empty">
-        No pipelines yet. Create one to chain models and HTTP steps.
-      </p>
+      <div v-if="!loading && !error && pipelines.length === 0" class="app-empty text-center py-8 px-4">
+        <p class="font-medium text-zinc-900 mb-1">No pipelines yet</p>
+        <p class="text-sm text-muted-foreground mb-4">Pipelines chain steps like "search your docs" and "call your model" so you can build flows (e.g. chat with your docs) without writing code.</p>
+        <AppButton to="/app/pipelines/new">New pipeline</AppButton>
+        <p class="mt-3">
+          <NuxtLink to="/app/glossary" class="text-sm text-accent hover:text-accent-hover">Learn key concepts</NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>

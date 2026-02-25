@@ -4,15 +4,76 @@
       <div class="p-4 border-b border-border">
         <NuxtLink to="/" class="text-lg font-semibold text-zinc-900 tracking-tight transition-colors hover:text-accent">Aploy</NuxtLink>
       </div>
-      <nav class="flex-1 p-3 space-y-0.5">
-        <NuxtLink
-          v-for="item in nav"
-          :key="item.href"
-          :to="item.href"
-          class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 transition-colors duration-app"
-        >
-          {{ item.label }}
-        </NuxtLink>
+      <nav class="flex-1 p-3 overflow-auto space-y-4">
+        <div>
+          <NuxtLink
+            :to="navOverview.href"
+            :title="navOverview.subtitle"
+            class="flex items-center rounded-app px-3 py-2 text-sm font-medium text-zinc-900 hover:bg-surface-overlay transition-colors duration-app"
+          >
+            {{ navOverview.label }}
+          </NuxtLink>
+        </div>
+        <div>
+          <p class="px-3 py-1 text-[11px] font-semibold text-muted-foreground/90 uppercase tracking-wider">Training</p>
+          <NuxtLink
+            v-for="item in navTraining"
+            :key="item.href"
+            :to="item.href"
+            :title="item.subtitle"
+            class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 transition-colors duration-app"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </div>
+        <div>
+          <p class="px-3 py-1 text-[11px] font-semibold text-muted-foreground/90 uppercase tracking-wider">Live & use</p>
+          <NuxtLink
+            v-for="item in navLive"
+            :key="item.href"
+            :to="item.href"
+            :title="item.subtitle"
+            class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 transition-colors duration-app"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </div>
+        <div>
+          <p class="px-3 py-1 text-[11px] font-semibold text-muted-foreground/90 uppercase tracking-wider">Automations</p>
+          <NuxtLink
+            v-for="item in navAutomations"
+            :key="item.href"
+            :to="item.href"
+            :title="item.subtitle"
+            class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 transition-colors duration-app"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </div>
+        <div>
+          <p class="px-3 py-1 text-[11px] font-semibold text-muted-foreground/90 uppercase tracking-wider">Account & help</p>
+          <NuxtLink
+            v-for="item in navAccount"
+            :key="item.href"
+            :to="item.href"
+            :title="item.subtitle"
+            class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 transition-colors duration-app"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </div>
+        <div>
+          <p class="px-3 py-1 text-[11px] font-semibold text-muted-foreground/90 uppercase tracking-wider">For developers</p>
+          <NuxtLink
+            v-for="item in navDevelopers"
+            :key="item.href"
+            :to="item.href"
+            :title="item.subtitle"
+            class="flex items-center rounded-app px-3 py-2 text-sm text-muted-foreground hover:bg-surface-overlay hover:text-zinc-900 transition-colors duration-app"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </div>
       </nav>
       <div class="p-3 border-t border-border">
         <NuxtLink
@@ -55,22 +116,32 @@ export default defineComponent({
   data() {
     return {
       environment: 'sandbox' as 'sandbox' | 'production',
-      nav: [
-        { href: '/app', label: 'Dashboard' },
-        { href: '/app/datasets', label: 'Datasets' },
-        { href: '/app/projects', label: 'Projects' },
-        { href: '/app/runs', label: 'Runs' },
-        { href: '/app/evaluations', label: 'Evaluations' },
-        { href: '/app/registry', label: 'Registry' },
-        { href: '/app/deployments', label: 'Deployments' },
-        { href: '/app/knowledge-bases', label: 'Knowledge bases' },
-        { href: '/app/pipelines', label: 'Pipelines' },
-        { href: '/app/triggers', label: 'Triggers' },
-        { href: '/app/api-explorer', label: 'API Explorer' },
-        { href: '/app/billing', label: 'Billing' },
-        { href: '/app/settings', label: 'Settings' },
-        { href: '/app/integrations', label: 'Integrations' },
-        { href: '/app/org', label: 'Org' },
+      navOverview: { href: '/app', label: 'Dashboard', subtitle: 'Usage, journey, and overview' },
+      navTraining: [
+        { href: '/app/projects', label: 'Projects', subtitle: 'What you\'re training (model + goal)' },
+        { href: '/app/datasets', label: 'Data', subtitle: 'Your training data' },
+        { href: '/app/runs', label: 'Training runs', subtitle: 'Past and current jobs' },
+        { href: '/app/evaluations', label: 'Compare results', subtitle: 'Baseline vs tuned model' },
+        { href: '/app/registry', label: 'Saved models', subtitle: 'Model versions from runs' },
+      ],
+      navLive: [
+        { href: '/app/deployments', label: 'Live models', subtitle: 'Models you can call now' },
+        { href: '/app/deployments/try', label: 'Try your model', subtitle: 'Test with a simple prompt' },
+        { href: '/app/knowledge-bases', label: 'Your docs', subtitle: 'Docs for search in flows' },
+      ],
+      navAutomations: [
+        { href: '/app/pipelines', label: 'Flows', subtitle: 'Chain steps (e.g. search docs → model)' },
+        { href: '/app/triggers', label: 'Webhooks', subtitle: 'Run flows from Zapier or your app' },
+      ],
+      navAccount: [
+        { href: '/app/billing', label: 'Billing', subtitle: 'Usage and payment' },
+        { href: '/app/settings', label: 'Settings', subtitle: 'Profile and security' },
+        { href: '/app/integrations', label: 'Connections', subtitle: 'Cloud and API credentials' },
+        { href: '/app/org', label: 'Team', subtitle: 'Members and API keys' },
+        { href: '/app/glossary', label: 'Concepts', subtitle: 'Learn key terms' },
+      ],
+      navDevelopers: [
+        { href: '/app/api-explorer', label: 'API Explorer', subtitle: 'Send JSON to your model' },
       ],
     }
   },

@@ -1,6 +1,9 @@
 <template>
   <div class="app-page">
-    <AppPageHeader title="Runs" />
+    <AppPageHeader
+      title="Runs"
+      description="Training jobs. See status, duration, cost, and open a run to view metrics and deploy."
+    />
     <p v-if="loading" class="text-muted-foreground text-sm">Loading…</p>
     <p v-else-if="error" class="app-error">{{ error }}</p>
     <div v-else class="app-table-wrap">
@@ -31,9 +34,14 @@
           </tr>
         </tbody>
       </table>
-      <p v-if="!loading && !error && runs.length === 0" class="app-empty">
-        No runs yet.
-      </p>
+      <div v-if="!loading && !error && runs.length === 0" class="app-empty text-center py-8 px-4">
+        <p class="font-medium text-zinc-900 mb-1">No runs yet</p>
+        <p class="text-sm text-muted-foreground mb-4">A run is one training job. Start one from a project (pick dataset and config); you'll see status, logs, and cost here.</p>
+        <AppButton to="/app/training/new">Start training</AppButton>
+        <p class="mt-3">
+          <NuxtLink to="/app/glossary" class="text-sm text-accent hover:text-accent-hover">Learn key concepts</NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>

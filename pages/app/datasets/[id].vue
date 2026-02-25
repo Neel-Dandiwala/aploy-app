@@ -25,7 +25,8 @@
         </div>
       </AppCard>
       <AppCard class="mb-4">
-        <h3 class="app-section-title mb-4">Versions</h3>
+        <h3 class="app-section-title mb-2">Versions</h3>
+        <p class="text-sm text-muted-foreground mb-4">A version is a snapshot of your data. When you start a training run, you pick a version so the run is reproducible. Create a version after ingestion to lock the data.</p>
         <ul v-if="dataset.versions?.length" class="space-y-2 text-sm">
           <li
             v-for="v in dataset.versions"

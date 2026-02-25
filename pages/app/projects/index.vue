@@ -35,9 +35,14 @@
           </tr>
         </tbody>
       </table>
-      <p v-if="!loading && !error && projects.length === 0" class="app-empty">
-        No projects yet. Create one to get started.
-      </p>
+      <div v-if="!loading && !error && projects.length === 0" class="app-empty text-center py-8 px-4">
+        <p class="font-medium text-zinc-900 mb-1">No projects yet</p>
+        <p class="text-sm text-muted-foreground mb-4">A project defines what you're training: which base model and goal (e.g. improve for chat or train from preferences). Create one to start.</p>
+        <AppButton to="/app/projects/new">Create project</AppButton>
+        <p class="mt-3">
+          <NuxtLink to="/app/glossary" class="text-sm text-accent hover:text-accent-hover">Learn key concepts</NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>

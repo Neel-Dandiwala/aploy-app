@@ -33,9 +33,14 @@
           </tr>
         </tbody>
       </table>
-      <p v-if="!loading && !error && datasets.length === 0" class="app-empty">
-        No datasets yet. Add one to get started.
-      </p>
+      <div v-if="!loading && !error && datasets.length === 0" class="app-empty text-center py-8 px-4">
+        <p class="font-medium text-zinc-900 mb-1">No datasets yet</p>
+        <p class="text-sm text-muted-foreground mb-4">Your training data lives in datasets. Upload a file or connect cloud storage, then create a version to use in a run.</p>
+        <AppButton to="/app/datasets/new">Add dataset</AppButton>
+        <p class="mt-3">
+          <NuxtLink to="/app/glossary" class="text-sm text-accent hover:text-accent-hover">Learn key concepts</NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>

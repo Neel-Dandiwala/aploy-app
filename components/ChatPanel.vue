@@ -17,21 +17,22 @@
       </template>
     </button>
     <template v-if="open">
-      <div class="p-3 border-b border-border">
-        <label class="app-label">OpenAI API key (or set in API .env)</label>
+      <details class="p-3 border-b border-border">
+        <summary class="text-xs text-muted-foreground cursor-pointer hover:text-zinc-700">Optional: add your own API key</summary>
+        <p class="text-xs text-muted-foreground mt-1 mb-2">The assistant can use the key set on the server, or you can paste one here.</p>
         <input
           v-model="apiKey"
           type="password"
           placeholder="sk-..."
-          class="app-input py-1.5 text-xs"
+          class="app-input py-1.5 text-xs w-full"
         />
-      </div>
+      </details>
       <div
         ref="listRef"
         class="flex-1 overflow-y-auto p-3 space-y-3 min-h-[200px] max-h-[calc(100vh-280px)]"
       >
         <p v-if="messages.length === 0" class="text-muted text-sm">
-          Ask me to create a project, add a dataset, start training, or deploy.
+          Ask me to create a project, add a dataset, start training, or deploy. You can also ask "What is LoRA?" or "What's the difference between SFT and DPO?"
         </p>
         <div
           v-for="(msg, i) in messages"
@@ -146,7 +147,7 @@ export default defineComponent({
         const err = e as { data?: { error?: string }; message?: string }
         this.messages.push({
           role: 'assistant',
-          content: err?.data?.error || err?.message || 'Request failed. Check API key.',
+          content: err?.data?.error || err?.message || 'Request failed. If the assistant needs an API key, add one in the optional section above or in Settings.',
         })
       } finally {
         this.loading = false

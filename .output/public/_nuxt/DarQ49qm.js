@@ -1,1 +1,0 @@
-import{_ as s}from"./DlAUqK2U.js";import{o,c as r,p as c}from"./BpnP_1c4.js";const t={},n={class:"min-h-screen bg-surface"};function a(e,_){return o(),r("div",n,[c(e.$slots,"default")])}const d=s(t,[["render",a]]);export{d as default};

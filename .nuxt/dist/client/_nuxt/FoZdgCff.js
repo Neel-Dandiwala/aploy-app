@@ -1,1 +1,0 @@
-import{a as r}from"./BRJawhm2.js";const e="aploy-environment";function s(){const n=r(e,()=>"sandbox");function o(t){if(n.value=t,typeof localStorage<"u")try{localStorage.setItem(e,t)}catch{}}return{environment:n,setEnvironment:o}}export{s as u};

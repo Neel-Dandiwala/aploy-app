@@ -75,12 +75,40 @@
           </div>
         </div>
       </details>
+      <div v-if="testRun" class="rounded-app border border-border/50 p-4 bg-muted/20">
+        <h4 class="app-section-title mb-2">Safeguard test</h4>
+        <p v-if="testRun.status === 'queued' || testRun.status === 'running'" class="text-sm text-muted-foreground">
+          Running test… ({{ testRun.status }})
+        </p>
+        <p v-else-if="testRun.test_passed === true" class="text-sm text-emerald-600 flex items-center gap-2">
+          <span class="inline-block w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-600">✓</span>
+          Test passed. Ready to start training.
+        </p>
+        <p v-else-if="testRun.test_passed === false || testRun.status === 'failed'" class="text-sm text-destructive flex items-center gap-2">
+          <span class="inline-block w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center text-destructive">✗</span>
+          Test failed. Fix your script or config before training.
+        </p>
+        <AppButton
+          v-if="!testRun.id"
+          type="button"
+          variant="secondary"
+          class="mt-2"
+          :disabled="loading"
+          @click="runTest"
+        >
+          Run safeguard test first
+        </AppButton>
+      </div>
       <div v-if="error">
         <p class="app-error">What happened: {{ error }}</p>
         <AppErrorRecovery :error="error" />
       </div>
       <div class="flex flex-wrap gap-3 pt-1">
-        <AppButton type="submit" :disabled="loading">
+        <AppButton
+          type="submit"
+          :disabled="loading || testRun?.test_passed !== true"
+          :title="testRun?.test_passed !== true ? 'Run safeguard test first and wait for it to pass' : ''"
+        >
           {{ loading ? 'Starting…' : 'Start training' }}
         </AppButton>
         <AppButton variant="secondary" to="/app/projects/proj_demo1">Cancel</AppButton>
@@ -99,7 +127,15 @@ export default defineComponent({
   data() {
     return {
       trainingGoal: 'chat' as 'chat' | 'preferences' | 'custom',
-      form: { dataset_version_id: 'dsv_1', epochs: RECOMMENDED.epochs, lora_rank: RECOMMENDED.lora_rank, compute_mode: 'auto' as const },
+      form: {
+        project_id: 'proj_demo1',
+        script_version_id: 'sv_mock1',
+        dataset_version_id: 'dsv_1',
+        epochs: RECOMMENDED.epochs,
+        lora_rank: RECOMMENDED.lora_rank,
+        compute_mode: 'auto' as const,
+      },
+      testRun: null as { id?: string; status?: string; test_passed?: boolean } | null,
       loading: false,
       error: '',
     }
@@ -123,6 +159,40 @@ export default defineComponent({
       this.form.epochs = RECOMMENDED.epochs
       this.form.lora_rank = RECOMMENDED.lora_rank
     },
+    async runTest() {
+      this.error = ''
+      this.loading = true
+      try {
+        const data = await this.apiFetch<{ id: string }>('/api/runs/test', {
+          method: 'POST',
+          body: {
+            project_id: this.form.project_id,
+            script_version_id: this.form.script_version_id,
+            dataset_version_id: this.form.dataset_version_id,
+            config: { epochs: this.form.epochs, lora_rank: this.form.lora_rank },
+          },
+        })
+        this.testRun = { id: data.id, status: 'queued' }
+        this.pollTestRun(data.id)
+      } catch (e) {
+        this.error = (e as Error).message || 'Test failed'
+      } finally {
+        this.loading = false
+      }
+    },
+    async pollTestRun(id: string) {
+      const maxAttempts = 30
+      for (let i = 0; i < maxAttempts; i++) {
+        await new Promise((r) => setTimeout(r, 1000))
+        try {
+          const run = await this.apiFetch<{ status: string; test_passed?: boolean }>(`/api/runs/${id}`)
+          if (this.testRun) this.testRun = { ...this.testRun, status: run.status, test_passed: run.test_passed }
+          if (run.status === 'succeeded' || run.status === 'failed') break
+        } catch {
+          break
+        }
+      }
+    },
     async onSubmit() {
       this.error = ''
       this.loading = true
@@ -130,7 +200,8 @@ export default defineComponent({
         const data = await this.apiFetch<{ id: string }>('/api/runs', {
           method: 'POST',
           body: {
-            project_id: 'proj_demo1',
+            project_id: this.form.project_id,
+            script_version_id: this.form.script_version_id,
             dataset_version_id: this.form.dataset_version_id,
             config: { epochs: this.form.epochs, lora_rank: this.form.lora_rank },
             compute: { mode: this.form.compute_mode },

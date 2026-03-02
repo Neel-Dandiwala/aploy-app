@@ -18,7 +18,22 @@
         <p class="text-sm text-muted-foreground mt-1">
           Source: {{ sourceLabel }}
         </p>
-        <div v-if="canIngest" class="mt-3">
+        <div v-if="canUpload" class="mt-3 space-y-2">
+          <label class="block">
+            <span class="app-label text-sm">Upload CSV or JSONL file</span>
+            <input
+              ref="fileInput"
+              type="file"
+              accept=".csv,.jsonl,.json"
+              class="block mt-1 text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-border file:text-sm file:font-medium file:cursor-pointer hover:file:bg-muted/50"
+              @change="onFileSelected"
+            />
+          </label>
+          <AppButton :disabled="uploading || !selectedFile" @click="uploadFile">
+            {{ uploading ? 'Uploading…' : 'Upload & ingest' }}
+          </AppButton>
+        </div>
+        <div v-else-if="canIngest" class="mt-3">
           <AppButton :disabled="ingesting" @click="runIngestion">
             {{ ingesting ? 'Ingesting…' : 'Run ingestion' }}
           </AppButton>
@@ -47,6 +62,29 @@
           <li>PII flagged: {{ dataset.quality?.pii_flagged ?? '—' }}</li>
           <li>Schema adherence: {{ dataset.quality?.schema_adherence ?? '—' }}%</li>
         </ul>
+      </AppCard>
+      <AppCard>
+        <h3 class="app-section-title mb-2">Link to project</h3>
+        <p class="text-sm text-muted-foreground mb-3">Add this dataset to a project so you can use it for training.</p>
+        <div class="flex flex-wrap gap-2 items-center">
+          <select
+            v-model="linkProjectId"
+            class="app-input py-1.5 text-sm w-48"
+          >
+            <option value="">Select project…</option>
+            <option v-for="p in projects" :key="p.id" :value="p.id">
+              {{ p.name }}
+            </option>
+          </select>
+          <AppButton
+            :disabled="!linkProjectId || linking"
+            size="md"
+            @click="linkToProject"
+          >
+            {{ linking ? 'Linking…' : 'Link' }}
+          </AppButton>
+        </div>
+        <p v-if="linkSuccess" class="text-sm text-emerald-600 mt-2">Linked. View in <NuxtLink :to="`/app/projects/${linkProjectId}`" class="text-accent">project</NuxtLink>.</p>
       </AppCard>
     </template>
   </div>
@@ -80,9 +118,15 @@ export default defineComponent({
   data() {
     return {
       dataset: null as DatasetDetail | null,
+      projects: [] as Array<{ id: string; name: string }>,
+      linkProjectId: '',
+      linking: false,
+      linkSuccess: false,
       loading: true,
       error: '',
       ingesting: false,
+      uploading: false,
+      selectedFile: null as File | null,
     }
   },
   computed: {
@@ -93,6 +137,9 @@ export default defineComponent({
       if (s.type === 'gcs') return `GCS ${s.bucket || ''} ${(s as { prefix?: string }).prefix || ''}`.trim()
       if (s.type === 'hf') return `Hugging Face ${(s as { dataset?: string }).dataset || ''}`.trim()
       return String(s.type || 'upload')
+    },
+    canUpload(): boolean {
+      return !!this.dataset && this.dataset.source?.type === 'upload'
     },
     canIngest(): boolean {
       return !!this.dataset && ['s3', 'gcs', 'hf'].includes(this.dataset.source?.type || '')
@@ -105,11 +152,12 @@ export default defineComponent({
     },
   },
   setup() {
-    const { apiFetch } = useAployApi()
-    return { apiFetch }
+    const { apiFetch, apiUrl, environment } = useAployApi()
+    return { apiFetch, apiUrl, environment }
   },
   async mounted() {
     await this.load()
+    await this.loadProjects()
   },
   methods: {
     async load() {
@@ -124,6 +172,33 @@ export default defineComponent({
         this.loading = false
       }
     },
+    onFileSelected(e: Event) {
+      const input = e.target as HTMLInputElement
+      this.selectedFile = input.files?.[0] || null
+    },
+    async uploadFile() {
+      if (!this.dataset || !this.selectedFile) return
+      this.uploading = true
+      this.error = ''
+      try {
+        const form = new FormData()
+        form.append('file', this.selectedFile)
+        await $fetch(`${this.apiUrl}/api/datasets/${this.dataset.id}/upload`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'X-Environment': this.environment?.value ?? 'production' },
+          body: form,
+        })
+        this.selectedFile = null
+        const input = this.$refs.fileInput as HTMLInputElement
+        if (input) input.value = ''
+        await this.load()
+      } catch (e) {
+        this.error = (e as Error).message || 'Upload failed'
+      } finally {
+        this.uploading = false
+      }
+    },
     async runIngestion() {
       if (!this.dataset) return
       this.ingesting = true
@@ -134,6 +209,30 @@ export default defineComponent({
         this.error = (e as Error).message || 'Ingestion failed'
       } finally {
         this.ingesting = false
+      }
+    },
+    async loadProjects() {
+      try {
+        const data = await this.apiFetch<{ projects: Array<{ id: string; name: string }> }>('/api/projects')
+        this.projects = data.projects || []
+      } catch {
+        this.projects = []
+      }
+    },
+    async linkToProject() {
+      if (!this.dataset || !this.linkProjectId) return
+      this.linking = true
+      this.linkSuccess = false
+      try {
+        await this.apiFetch(`/api/projects/${this.linkProjectId}/datasets`, {
+          method: 'POST',
+          body: { dataset_id: this.dataset.id },
+        })
+        this.linkSuccess = true
+      } catch (e) {
+        this.error = (e as Error).message || 'Link failed'
+      } finally {
+        this.linking = false
       }
     },
   },

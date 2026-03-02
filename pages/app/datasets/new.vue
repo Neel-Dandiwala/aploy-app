@@ -2,7 +2,7 @@
   <div class="app-page-narrow">
     <AppPageHeader
       title="Add dataset"
-      description="Upload a file with your training examples, or connect a folder in the cloud. We accept JSONL: one JSON object per line."
+      description="Upload your data file or connect to cloud storage. We accept CSV and JSONL—we'll prepare it for training."
       back-to="/app/datasets"
       back-label="Datasets"
     />
@@ -23,7 +23,7 @@
             <input v-model="form.sourceType" type="radio" value="upload" class="mt-1 rounded border-border text-accent focus:ring-accent/30" />
             <div>
               <span class="font-medium text-zinc-900">Upload a file</span>
-              <p class="text-sm text-muted-foreground mt-0.5">Best for getting started. Upload a JSONL file (one example per line). We'll validate and prepare it for training.</p>
+              <p class="text-sm text-muted-foreground mt-0.5">CSV or JSONL. We'll convert and prepare it for training. Best for spreadsheets or exported data.</p>
             </div>
           </label>
           <label class="flex gap-3 p-3 rounded-app border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
@@ -48,10 +48,25 @@
             </div>
           </label>
         </div>
-        <div v-if="form.sourceType === 'upload'" class="rounded-app bg-muted/30 border border-border/50 p-4">
-          <p class="text-sm text-muted-foreground">
-            <strong class="text-zinc-900">JSONL format:</strong> One JSON object per line. Each line should have a <code class="text-xs bg-muted px-1 rounded">messages</code> array (for chat) or <code class="text-xs bg-muted px-1 rounded">instruction</code> / <code class="text-xs bg-muted px-1 rounded">response</code> fields. After you create the dataset, go to its page to upload the file and run ingestion.
-          </p>
+        <div v-if="form.sourceType === 'upload'" class="rounded-app bg-muted/30 border border-border/50 p-4 space-y-4">
+          <div>
+            <label class="app-label block mb-2">Select your data file</label>
+            <input
+              ref="fileInput"
+              type="file"
+              accept=".csv,.jsonl,.json"
+              class="block w-full text-sm text-muted-foreground file:mr-4 file:py-3 file:px-4 file:rounded-lg file:border file:border-border file:bg-surface-overlay file:text-sm file:font-medium file:cursor-pointer hover:file:bg-muted/50"
+              @change="onFileSelected"
+            />
+            <p v-if="form.selectedFile" class="text-sm text-emerald-600 mt-1">Selected: {{ form.selectedFile.name }}</p>
+          </div>
+          <details class="text-sm text-muted-foreground">
+            <summary class="cursor-pointer hover:text-zinc-700">What formats work?</summary>
+            <ul class="mt-2 space-y-1 list-disc list-inside">
+              <li><strong>CSV</strong> — Spreadsheet with columns like prompt/completion, question/answer, or instruction/response. We auto-detect and convert.</li>
+              <li><strong>JSONL</strong> — One JSON object per line (common for exports). Each row can have <code class="text-xs bg-muted px-1 rounded">messages</code>, <code class="text-xs bg-muted px-1 rounded">instruction</code>/<code class="text-xs bg-muted px-1 rounded">response</code>, or <code class="text-xs bg-muted px-1 rounded">prompt</code>/<code class="text-xs bg-muted px-1 rounded">completion</code>.</li>
+            </ul>
+          </details>
         </div>
         <div v-else-if="form.sourceType === 's3' || form.sourceType === 'gcs'" class="rounded-app border border-border/50 p-4 space-y-3">
           <p class="text-sm text-muted-foreground">Connect a folder in the cloud where your examples live. You'll need a credential (add one under Integrations).</p>
@@ -91,8 +106,11 @@
         <AppErrorRecovery :error="error" />
       </div>
       <div class="flex flex-wrap gap-3 pt-1">
-        <AppButton type="submit" :disabled="loading">
-          {{ loading ? 'Starting…' : 'Create dataset' }}
+        <AppButton
+          type="submit"
+          :disabled="loading || (form.sourceType === 'upload' && !form.selectedFile)"
+        >
+          {{ loading ? 'Creating…' : form.sourceType === 'upload' && form.selectedFile ? 'Create & upload dataset' : 'Create dataset' }}
         </AppButton>
         <AppButton variant="secondary" to="/app/datasets">Cancel</AppButton>
       </div>
@@ -118,6 +136,7 @@ export default defineComponent({
         prefix: '',
         credentialId: '',
         hfDataset: '',
+        selectedFile: null as File | null,
       },
       credentials: [] as Credential[],
       loading: false,
@@ -133,8 +152,9 @@ export default defineComponent({
     },
   },
   setup() {
-    const { apiFetch } = useAployApi()
-    return { apiFetch }
+    const { apiFetch, apiUrl, environment } = useAployApi()
+    const { mockMode } = useMockMode()
+    return { apiFetch, apiUrl, environment, mockMode }
   },
   async mounted() {
     try {
@@ -145,36 +165,61 @@ export default defineComponent({
     }
   },
   methods: {
+    onFileSelected(e: Event) {
+      const input = e.target as HTMLInputElement
+      this.form.selectedFile = input.files?.[0] || null
+    },
     async onSubmit() {
       this.error = ''
       this.loading = true
-      const body: Record<string, unknown> = { name: this.form.name || 'Untitled dataset', schema_ref: 'chat' }
-      if (this.form.sourceType === 's3') {
-        body.source = {
-          type: 's3',
-          bucket: this.form.bucket,
-          prefix: this.form.prefix,
-          credentialId: this.form.credentialId || undefined,
-        }
-      } else if (this.form.sourceType === 'gcs') {
-        body.source = {
-          type: 'gcs',
-          bucket: this.form.bucket,
-          prefix: this.form.prefix,
-          credentialId: this.form.credentialId || undefined,
-        }
-      } else if (this.form.sourceType === 'hf') {
-        body.source = {
-          type: 'hf',
-          dataset: this.form.hfDataset,
-          credentialId: this.form.credentialId || undefined,
-        }
-      } else {
-        body.source = { type: 'upload' }
-      }
       try {
-        const data = await this.apiFetch<{ id: string }>('/api/datasets', { method: 'POST', body })
-        await navigateTo(`/app/datasets/${data.id}`)
+        if (this.form.sourceType === 'upload' && this.form.selectedFile) {
+          if (this.mockMode?.value) {
+            const data = await this.apiFetch<{ id: string }>('/api/datasets', {
+              method: 'POST',
+              body: { name: this.form.name || 'Untitled dataset', source: { type: 'upload' } },
+            })
+            await navigateTo(`/app/datasets/${data.id}`)
+          } else {
+            const form = new FormData()
+            form.append('name', this.form.name || 'Untitled dataset')
+            form.append('file', this.form.selectedFile)
+            const data = await $fetch<{ id: string }>(`${this.apiUrl}/api/datasets`, {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'X-Environment': this.environment?.value ?? 'production' },
+              body: form,
+            })
+            await navigateTo(`/app/datasets/${data.id}`)
+          }
+        } else {
+          const body: Record<string, unknown> = { name: this.form.name || 'Untitled dataset', schema_ref: 'chat' }
+          if (this.form.sourceType === 's3') {
+            body.source = {
+              type: 's3',
+              bucket: this.form.bucket,
+              prefix: this.form.prefix,
+              credentialId: this.form.credentialId || undefined,
+            }
+          } else if (this.form.sourceType === 'gcs') {
+            body.source = {
+              type: 'gcs',
+              bucket: this.form.bucket,
+              prefix: this.form.prefix,
+              credentialId: this.form.credentialId || undefined,
+            }
+          } else if (this.form.sourceType === 'hf') {
+            body.source = {
+              type: 'hf',
+              dataset: this.form.hfDataset,
+              credentialId: this.form.credentialId || undefined,
+            }
+          } else {
+            body.source = { type: 'upload' }
+          }
+          const data = await this.apiFetch<{ id: string }>('/api/datasets', { method: 'POST', body })
+          await navigateTo(`/app/datasets/${data.id}`)
+        }
       } catch (e) {
         this.error = (e as Error).message || 'Failed to create dataset'
       } finally {
